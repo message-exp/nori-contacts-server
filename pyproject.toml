@@ -1,0 +1,9 @@
+[project]
+name = "nori-contacts-server"
+version = "0.1.0"
+description = "A server to store the user contacts information of nori."
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "fastapi[standard]>=0.115.14",
+]
