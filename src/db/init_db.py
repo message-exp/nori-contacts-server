@@ -14,7 +14,7 @@ async def create_user_contacts_table(conn: asyncpg.Connection):
             UNIQUE (platform, platform_user_id)
         )
         CREATE INDEX IF NOT EXISTS idx_user_id ON user_contacts(user_id);
-        CREATE INDEX IF NOT EXISTS idx_platform_user_id ON user_contacts(platform_user_id);z
+        CREATE INDEX IF NOT EXISTS idx_platform_user_id ON user_contacts(platform_user_id);
     """)
     print("user_contacts table checked/created.")
 
