@@ -2,14 +2,16 @@ from enum import Enum
 from pydantic import BaseModel
 
 
-class PlatfromEnum(str, Enum):
+class PlatformEnum(str, Enum):
     TELEGRAM = "Telegram"
     DISCORD = "Discord"
 
+class ContactCard(BaseModel):
+    contact_name: str
+    contact_avatar_url: str | None = None
 
-class UserContact(BaseModel):
-    user_id: str
-    platfrom_user_id: str
-    platfrom_username: str
-    platfrom: PlatfromEnum
-    avatar: str | None = None
+
+class PlatformContact(BaseModel):
+    contact_card_id: int
+    platform: PlatformEnum
+    platform_user_id: str
