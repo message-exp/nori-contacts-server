@@ -27,7 +27,7 @@ async def insert_contact_card(
                 DEFAULT,
                 DEFAULT
             ) ON CONFLICT (owner_matrix_id) DO NOTHING;
-    """,
+        """,
         owner_matrix_id,
         contact_name,
         contact_avatar_url,
@@ -67,7 +67,7 @@ async def update_contact_card(
             updated_at = CURRENT_TIMESTAMP
         WHERE
             owner_matrix_id = $3;
-    """,
+        """,
         contact_name,
         contact_avatar_url,
         owner_matrix_id,
@@ -77,9 +77,10 @@ async def update_contact_card(
 async def delete_contact_card(conn: asyncpg.Connection, owner_matrix_id: int):
     await conn.execute(
         """
-        DELETE FROM contact_cards
-        WHERE
+        DELETE
+        SELECT *
+        FROM contact_cards WHERE
             owner_matrix_id = $1;
-    """,
+        """,
         owner_matrix_id,
     )

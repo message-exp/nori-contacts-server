@@ -26,7 +26,7 @@ async def insert_platform_contact(
         WHERE 
             owner_matrix_id = $3
         ON CONFLICT (contact_card_id, platform) DO NOTHING;
-    """,
+        """,
         platform,
         platform_user_id,
         owner_matrix_id,
@@ -86,7 +86,7 @@ async def delete_platform_contact(
         WHERE
             contact_card_id = $1
             AND platform = $2;
-    """,
+        """,
         contact_card_id,
         platform,
     )
