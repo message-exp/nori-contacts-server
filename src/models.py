@@ -6,6 +6,7 @@ class PlatformEnum(str, Enum):
     TELEGRAM = "Telegram"
     DISCORD = "Discord"
 
+
 class ContactCard(BaseModel):
     contact_name: str
     contact_avatar_url: str | None = None
