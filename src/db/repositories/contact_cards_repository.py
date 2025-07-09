@@ -78,7 +78,7 @@ async def delete_contact_card(conn: asyncpg.Connection, owner_matrix_id: int):
     await conn.execute(
         """
         DELETE
-        SELECT *
+        -- SELECT *
         FROM contact_cards WHERE
             owner_matrix_id = $1;
         """,
