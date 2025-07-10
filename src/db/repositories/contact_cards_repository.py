@@ -9,7 +9,7 @@ async def insert_contact_card(
     contact_name: str,
     contact_avatar_url: str | None = None,
 ):
-    await conn.execute(
+    owner_matrix_id = await conn.fetchrow(
         """
         INSERT INTO
             contact_cards (
@@ -26,12 +26,15 @@ async def insert_contact_card(
                 $3,
                 DEFAULT,
                 DEFAULT
-            ) ON CONFLICT (owner_matrix_id) DO NOTHING;
+            ) ON CONFLICT (owner_matrix_id,contact_name) DO NOTHING
+        RETURNING owner_matrix_id;
         """,
         owner_matrix_id,
         contact_name,
         contact_avatar_url,
     )
+    print(owner_matrix_id)
+    return owner_matrix_id
 
 
 async def get_contact_cards_by_owner(

@@ -5,11 +5,12 @@ async def create_contact_cards_table(conn: asyncpg.Connection):
     await conn.execute("""
         CREATE TABLE IF NOT EXISTS contact_cards (
             id SERIAL PRIMARY KEY,
-            owner_matrix_id VARCHAR UNIQUE NOT NULL,
+            owner_matrix_id VARCHAR NOT NULL,
             contact_name VARCHAR NOT NULL,
             contact_avatar_url VARCHAR,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE (owner_matrix_id, contact_name)
         );
         CREATE INDEX IF NOT EXISTS idx_owner_matrix_id ON contact_cards(owner_matrix_id);
     """)
