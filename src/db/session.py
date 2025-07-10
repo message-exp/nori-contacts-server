@@ -19,7 +19,6 @@ async def init_db_pool():
     )
 
 
-@asynccontextmanager
 async def get_db() -> AsyncGenerator[asyncpg.Connection, None]:
     if _db_pool is None:
         raise RuntimeError(
