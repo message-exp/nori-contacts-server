@@ -8,6 +8,7 @@ class Settings(BaseSettings):
     POSTGRES_PASSWORD: str
     POSTGRES_DB: str
     MATRIX_SERVER: str
+    APP_MODE: str
 
     @property
     def database_url(self):
