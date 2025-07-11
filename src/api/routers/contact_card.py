@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends, HTTPException, Request, Response
+from fastapi import APIRouter, Depends
 from schemas.contact_card import ContactCardResponse, ContactCardCreate
 from db.session import get_db
 from api.dependencies import get_user_id_from_header
@@ -26,7 +26,7 @@ async def get_all_contact_cards(
             "description": "Conflict - contact already exists",
         }
     },
-    response_model=MessageResponse
+    response_model=MessageResponse,
 )
 async def create_contact_card(
     contact: ContactCardCreate,

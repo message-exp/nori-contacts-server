@@ -1,7 +1,6 @@
 import asyncpg
-from fastapi import Depends, HTTPException
+from fastapi import HTTPException
 from schemas.contact_card import ContactCardCreate
-from db.session import get_db
 from db.repositories.contact_cards_repository import (
     get_contact_cards_by_owner,
     insert_contact_card,
