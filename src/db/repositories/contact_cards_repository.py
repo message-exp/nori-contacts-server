@@ -7,6 +7,7 @@ async def insert_contact_card(
     conn: asyncpg.Connection,
     owner_matrix_id: str,
     contact_name: str,
+    nickname:str,
     contact_avatar_url: str | None = None,
 ):
     owner_matrix_id = await conn.fetchrow(
@@ -15,6 +16,7 @@ async def insert_contact_card(
             contact_cards (
                 owner_matrix_id,
                 contact_name,
+                nickname,
                 contact_avatar_url,
                 created_at,
                 updated_at
@@ -24,17 +26,16 @@ async def insert_contact_card(
                 $1,
                 $2,
                 $3,
+                $4,
                 DEFAULT,
                 DEFAULT
-            ) ON CONFLICT (owner_matrix_id,contact_name) DO NOTHING
-        RETURNING owner_matrix_id;
+            )
         """,
         owner_matrix_id,
         contact_name,
+        nickname,
         contact_avatar_url,
     )
-    print(owner_matrix_id)
-    return owner_matrix_id
 
 
 async def get_contact_cards_by_owner(
@@ -44,6 +45,7 @@ async def get_contact_cards_by_owner(
         """
         SELECT
             contact_name,
+            nickname,
             contact_avatar_url
         FROM
             contact_cards
@@ -59,6 +61,7 @@ async def update_contact_card(
     conn: asyncpg.Connection,
     owner_matrix_id: int,
     contact_name: str,
+    nickname:str,
     contact_avatar_url: str | None = None,
 ):
     await conn.execute(
@@ -66,12 +69,14 @@ async def update_contact_card(
         UPDATE contact_cards
         SET
             contact_name = $1,
-            contact_avatar_url = $2,
+            nickname = $2
+            contact_avatar_url = $3,
             updated_at = CURRENT_TIMESTAMP
         WHERE
-            owner_matrix_id = $3;
+            owner_matrix_id = $4;
         """,
         contact_name,
+        nickname,
         contact_avatar_url,
         owner_matrix_id,
     )
