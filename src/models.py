@@ -9,6 +9,7 @@ class PlatformEnum(str, Enum):
 
 class ContactCard(BaseModel):
     contact_name: str
+    nickname: str | None = None
     contact_avatar_url: str | None = None
 
 

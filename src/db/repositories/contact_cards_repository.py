@@ -7,14 +7,16 @@ async def insert_contact_card(
     conn: asyncpg.Connection,
     owner_matrix_id: str,
     contact_name: str,
+    nickname:str,
     contact_avatar_url: str | None = None,
 ):
-    await conn.execute(
+    owner_matrix_id = await conn.fetchrow(
         """
         INSERT INTO
             contact_cards (
                 owner_matrix_id,
                 contact_name,
+                nickname,
                 contact_avatar_url,
                 created_at,
                 updated_at
@@ -24,12 +26,14 @@ async def insert_contact_card(
                 $1,
                 $2,
                 $3,
+                $4,
                 DEFAULT,
                 DEFAULT
-            ) ON CONFLICT (owner_matrix_id) DO NOTHING;
+            )
         """,
         owner_matrix_id,
         contact_name,
+        nickname,
         contact_avatar_url,
     )
 
@@ -41,6 +45,7 @@ async def get_contact_cards_by_owner(
         """
         SELECT
             contact_name,
+            nickname,
             contact_avatar_url
         FROM
             contact_cards
@@ -56,6 +61,7 @@ async def update_contact_card(
     conn: asyncpg.Connection,
     owner_matrix_id: int,
     contact_name: str,
+    nickname:str,
     contact_avatar_url: str | None = None,
 ):
     await conn.execute(
@@ -63,12 +69,14 @@ async def update_contact_card(
         UPDATE contact_cards
         SET
             contact_name = $1,
-            contact_avatar_url = $2,
+            nickname = $2
+            contact_avatar_url = $3,
             updated_at = CURRENT_TIMESTAMP
         WHERE
-            owner_matrix_id = $3;
+            owner_matrix_id = $4;
         """,
         contact_name,
+        nickname,
         contact_avatar_url,
         owner_matrix_id,
     )
