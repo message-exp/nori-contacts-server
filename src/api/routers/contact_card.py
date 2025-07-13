@@ -20,12 +20,6 @@ async def get_all_contact_cards(
 
 @router.post(
     "/",
-    responses={
-        409: {
-            "model": ErrorResponse,
-            "description": "Conflict - contact already exists",
-        }
-    },
     response_model=MessageResponse,
 )
 async def create_contact_card(

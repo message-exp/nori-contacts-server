@@ -1,5 +1,4 @@
 import asyncpg
-from fastapi import HTTPException
 from schemas.contact_card import ContactCardCreate
 from db.repositories.contact_cards_repository import (
     get_contact_cards_by_owner,
@@ -14,8 +13,6 @@ class ContactCardServicer:
     async def create_contact_card(
         self, db: asyncpg.Connection, user_id: str, contact: ContactCardCreate
     ):
-        owner_matrix_id = await insert_contact_card(
-            db, user_id, contact.contact_name, contact.contact_avatar_url
+        await insert_contact_card(
+            db, user_id, contact.contact_name,contact.nickname ,contact.contact_avatar_url
         )
-        if owner_matrix_id is None:
-            raise HTTPException(status_code=409, detail="Contact already exists.")
