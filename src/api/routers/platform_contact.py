@@ -4,7 +4,7 @@ from schemas.platform_contact import (
     PlatformContactCreate,
     PlatformContactResponse,
     PlatformContactUpdate,
-    PlatformEnum
+    PlatformEnum,
 )
 from db.session import get_db
 from api.dependencies import get_user_id_from_header
@@ -38,30 +38,26 @@ async def create_platform_contact(
 
 
 @router.put(
-    "/{contact_card_id}/{platform}",
+    "/{platform_card_id}",
     response_model=PlatformContactResponse,
 )
 async def update_platform_contact(
-    contact_card_id: UUID,
-    platform: PlatformEnum,
+    platform_card_id: UUID,
     platform_contact: PlatformContactUpdate,
     db: asyncpg.Connection = Depends(get_db),
     user_id: str = Depends(get_user_id_from_header),
 ):
-    return await service.update_platform_contact(
-        db, user_id, contact_card_id, platform, platform_contact
-    )
+    return await service.update_platform_contact(db, platform_card_id, platform_contact)
 
 
 @router.delete(
-    "/{contact_card_id}/{platform}",
+    "/{platform_card_id}",
     response_model=MessageResponse,
 )
 async def delete_platform_contact(
-    contact_card_id: UUID,
-    platform: PlatformEnum,
+    platform_card_id: UUID,
     db: asyncpg.Connection = Depends(get_db),
     user_id: str = Depends(get_user_id_from_header),
 ):
-    await service.delete_platform_contacts(db, user_id, contact_card_id, platform)
+    await service.delete_platform_contacts(db, platform_card_id)
     return {"message": "success"}

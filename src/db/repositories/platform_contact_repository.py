@@ -27,7 +27,7 @@ async def insert_platform_contact(
             DEFAULT
         )
         ON CONFLICT (contact_card_id, platform) DO NOTHING
-        RETURNING contact_card_id, platform, platform_user_id;
+        RETURNING id, contact_card_id, platform, platform_user_id;
         """,
         contact_card_id,
         platform,
@@ -42,6 +42,7 @@ async def get_platform_contacts_by_owner(
     rows = await conn.fetch(
         """
         SELECT
+            platform.id
             card.id AS contact_card_id,
             platform.platform,
             platform.platform_user_id
@@ -62,6 +63,7 @@ async def get_platform_contacts_by_contact_card_id(
     rows = await conn.fetch(
         """
         SELECT
+            id,
             contact_card_id,
             platform,
             platform_user_id
@@ -76,30 +78,28 @@ async def get_platform_contacts_by_contact_card_id(
 
 
 async def get_platform_contacts_by_contact_card_id_and_platform(
-    conn: asyncpg.Connection, contact_card_id: UUID, platform: str
-) -> list[PlatformContact]:
+    conn: asyncpg.Connection, platform_card_id: UUID
+) -> PlatformContact:
     row = await conn.fetchrow(
         """
         SELECT
+            id,
             contact_card_id,
             platform,
             platform_user_id
         FROM
             platform_contacts
         WHERE
-            contact_card_id = $1
-            AND platform = $2;
+            id = $1
         """,
-        contact_card_id,
-        platform,
+        platform_card_id,
     )
     return PlatformContact(**row) if row else None
 
 
 async def update_platform_contact_user_id(
     conn: asyncpg.Connection,
-    contact_card_id: UUID,
-    platform: str,
+    platform_card_id: UUID,
     platform_user_id: str,
 ):
     row = await conn.fetchrow(
@@ -109,28 +109,22 @@ async def update_platform_contact_user_id(
             platform_user_id = $1,
             updated_at = CURRENT_TIMESTAMP
         WHERE
-            contact_card_id = $2
-            AND platform = $3
-        RETURNING contact_card_id, platform, platform_user_id;
+            id = $2
+        RETURNING id, contact_card_id, platform, platform_user_id;
         """,
         platform_user_id,
-        contact_card_id,
-        platform,
+        platform_card_id,
     )
     return PlatformContact(**row) if row else None
 
 
-async def delete_platform_contact(
-    conn: asyncpg.Connection, contact_card_id: UUID, platform: str
-):
+async def delete_platform_contact(conn: asyncpg.Connection, platform_card_id: UUID):
     await conn.execute(
         """
         DELETE 
         -- SELECT *
         FROM platform_contacts WHERE
-            contact_card_id = $1
-            AND platform = $2;
+            id = $1
         """,
-        contact_card_id,
-        platform,
+        platform_card_id,
     )
