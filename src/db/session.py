@@ -24,8 +24,6 @@ async def init_db_pool():
             """,
         )
         await create_all_tables(conn)
-    
-        
 
 
 async def get_db() -> AsyncGenerator[asyncpg.Connection, None]:
@@ -34,4 +32,5 @@ async def get_db() -> AsyncGenerator[asyncpg.Connection, None]:
             "Database pool is not initialized. Call init_db_pool() first."
         )
     async with _db_pool.acquire() as connection:
-        yield connection
+        async with connection.transaction():
+            yield connection

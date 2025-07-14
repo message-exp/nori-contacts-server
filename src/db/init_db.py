@@ -34,6 +34,5 @@ async def create_platform_contacts_table(conn: asyncpg.Connection):
 
 
 async def create_all_tables(conn: asyncpg.Connection):
-    async with conn.transaction():
-        await create_contact_cards_table(conn)
-        await create_platform_contacts_table(conn)
+    await create_contact_cards_table(conn)
+    await create_platform_contacts_table(conn)
