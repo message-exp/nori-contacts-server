@@ -1,3 +1,4 @@
+from uuid import UUID
 import asyncpg
 
 from models import ContactCard
@@ -7,10 +8,10 @@ async def insert_contact_card(
     conn: asyncpg.Connection,
     owner_matrix_id: str,
     contact_name: str,
-    nickname:str,
+    nickname: str | None = None,
     contact_avatar_url: str | None = None,
-):
-    owner_matrix_id = await conn.fetchrow(
+) -> ContactCard:
+    row = await conn.fetchrow(
         """
         INSERT INTO
             contact_cards (
@@ -30,12 +31,14 @@ async def insert_contact_card(
                 DEFAULT,
                 DEFAULT
             )
+        RETURNING id, contact_name, nickname, contact_avatar_url
         """,
         owner_matrix_id,
         contact_name,
         nickname,
         contact_avatar_url,
     )
+    return ContactCard(**row)
 
 
 async def get_contact_cards_by_owner(
@@ -44,6 +47,7 @@ async def get_contact_cards_by_owner(
     rows = await conn.fetch(
         """
         SELECT
+            id,
             contact_name,
             nickname,
             contact_avatar_url
@@ -54,41 +58,65 @@ async def get_contact_cards_by_owner(
         """,
         owner_matrix_id,
     )
-    return [ContactCard(**dict(row)) for row in rows]
+    return [ContactCard(**row) for row in rows]
+
+
+async def get_single_contact_card_by_id_and_owner(
+    conn: asyncpg.Connection, id: UUID, owner_matrix_id: str
+) -> ContactCard | None:
+    row = await conn.fetchrow(
+        """
+        SELECT
+            id,
+            contact_name,
+            nickname,
+            contact_avatar_url
+        FROM
+            contact_cards
+        WHERE
+            id = $1
+            AND owner_matrix_id = $2;
+        """,
+        id,
+        owner_matrix_id,
+    )
+    return ContactCard(**row) if row else None
 
 
 async def update_contact_card(
     conn: asyncpg.Connection,
-    owner_matrix_id: int,
+    id: UUID,
     contact_name: str,
-    nickname:str,
+    nickname: str | None = None,
     contact_avatar_url: str | None = None,
-):
-    await conn.execute(
+) -> ContactCard | None:
+    row = await conn.fetchrow(
         """
         UPDATE contact_cards
         SET
             contact_name = $1,
-            nickname = $2
+            nickname = $2,
             contact_avatar_url = $3,
             updated_at = CURRENT_TIMESTAMP
         WHERE
-            owner_matrix_id = $4;
+            id = $4
+        RETURNING id, contact_name, nickname, contact_avatar_url;
         """,
         contact_name,
         nickname,
         contact_avatar_url,
-        owner_matrix_id,
+        id,
     )
+    return ContactCard(**row) if row else None
 
 
-async def delete_contact_card(conn: asyncpg.Connection, owner_matrix_id: int):
+async def delete_contact_card(conn: asyncpg.Connection, id: UUID):
     await conn.execute(
         """
         DELETE
         -- SELECT *
         FROM contact_cards WHERE
-            owner_matrix_id = $1;
+            id = $1;
         """,
-        owner_matrix_id,
+        id,
     )
