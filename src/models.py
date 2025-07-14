@@ -1,4 +1,5 @@
 from enum import Enum
+from uuid import UUID
 from pydantic import BaseModel
 
 
@@ -8,6 +9,7 @@ class PlatformEnum(str, Enum):
 
 
 class ContactCard(BaseModel):
+    id: UUID
     contact_name: str
     nickname: str | None = None
     contact_avatar_url: str | None = None
