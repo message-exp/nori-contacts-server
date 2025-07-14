@@ -20,7 +20,7 @@ async def create_contact_cards_table(conn: asyncpg.Connection):
 async def create_platform_contacts_table(conn: asyncpg.Connection):
     await conn.execute("""
         CREATE TABLE IF NOT EXISTS platform_contacts (
-            id SERIAL PRIMARY KEY,
+            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
             contact_card_id UUID NOT NULL REFERENCES contact_cards (id) ON DELETE CASCADE,
             platform VARCHAR NOT NULL,
             platform_user_id VARCHAR NOT NULL,

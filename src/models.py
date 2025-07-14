@@ -16,6 +16,7 @@ class ContactCard(BaseModel):
 
 
 class PlatformContact(BaseModel):
+    id: UUID
     contact_card_id: UUID
     platform: PlatformEnum
     platform_user_id: str

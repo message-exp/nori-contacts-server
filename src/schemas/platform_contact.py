@@ -4,6 +4,7 @@ from models import PlatformEnum
 
 
 class PlatformContactResponse(BaseModel):
+    id: UUID
     contact_card_id: UUID
     platform: PlatformEnum
     platform_user_id: str
