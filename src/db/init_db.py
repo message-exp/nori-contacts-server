@@ -26,7 +26,7 @@ async def create_platform_contacts_table(conn: asyncpg.Connection):
             platform_user_id VARCHAR NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE (contact_card_id, platform)
+            UNIQUE (contact_card_id, platform, platform_user_id)
         );
         CREATE INDEX IF NOT EXISTS idx_platform_user_id ON platform_contacts(platform_user_id);
     """)

@@ -26,7 +26,7 @@ async def insert_platform_contact(
             DEFAULT,
             DEFAULT
         )
-        ON CONFLICT (contact_card_id, platform) DO NOTHING
+        ON CONFLICT (contact_card_id, platform, platform_user_id) DO NOTHING
         RETURNING id, contact_card_id, platform, platform_user_id;
         """,
         contact_card_id,
