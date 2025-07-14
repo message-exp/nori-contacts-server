@@ -1,5 +1,10 @@
 from fastapi import APIRouter, Depends
-from schemas.contact_card import ContactCardResponse, ContactCardCreate
+from schemas.contact_card import (
+    ContactCardResponse,
+    ContactCardCreate,
+    ContactCardUpdate,
+    ContactCardDelete,
+)
 from db.session import get_db
 from api.dependencies import get_user_id_from_header
 from services.contact_card_service import ContactCardServicer
@@ -20,12 +25,36 @@ async def get_all_contact_cards(
 
 @router.post(
     "/",
-    response_model=MessageResponse,
+    response_model=ContactCardResponse,
 )
 async def create_contact_card(
     contact: ContactCardCreate,
     db: asyncpg.Connection = Depends(get_db),
     user_id: str = Depends(get_user_id_from_header),
 ):
-    await service.create_contact_card(db, user_id, contact)
+    return await service.create_contact_card(db, user_id, contact)
+
+
+@router.put(
+    "/",
+    response_model=ContactCardResponse,
+)
+async def update_contact_card(
+    contact: ContactCardUpdate,
+    db: asyncpg.Connection = Depends(get_db),
+    user_id: str = Depends(get_user_id_from_header),
+):
+    return await service.update_contact_card(db, user_id, contact)
+
+
+@router.delete(
+    "/",
+    response_model=MessageResponse,
+)
+async def delete_contact_card(
+    contact: ContactCardDelete,
+    db: asyncpg.Connection = Depends(get_db),
+    user_id: str = Depends(get_user_id_from_header),
+):
+    await service.delete_contact_card(db, user_id, contact)
     return {"message": "success"}
