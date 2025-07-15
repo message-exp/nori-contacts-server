@@ -1,12 +1,16 @@
+from uuid import UUID
 import asyncpg
 
 from models import PlatformContact
 
 
 async def insert_platform_contact(
-    conn: asyncpg.Connection, owner_matrix_id: str, platform: str, platform_user_id: str
+    conn: asyncpg.Connection,
+    contact_card_id: UUID,
+    platform: str,
+    platform_user_id: str,
 ):
-    await conn.execute(
+    row = await conn.fetchrow(
         """
         INSERT INTO platform_contacts (
             contact_card_id,
@@ -15,22 +19,21 @@ async def insert_platform_contact(
             created_at,
             updated_at
         )
-        SELECT
-            id,
+        VALUES(
             $1,
             $2,
-            CURRENT_TIMESTAMP,
-            CURRENT_TIMESTAMP
-        FROM 
-            contact_cards
-        WHERE 
-            owner_matrix_id = $3
-        ON CONFLICT (contact_card_id, platform) DO NOTHING;
+            $3,
+            DEFAULT,
+            DEFAULT
+        )
+        ON CONFLICT (contact_card_id, platform, platform_user_id) DO NOTHING
+        RETURNING id, contact_card_id, platform, platform_user_id;
         """,
+        contact_card_id,
         platform,
         platform_user_id,
-        owner_matrix_id,
     )
+    return PlatformContact(**row) if row else None
 
 
 async def get_platform_contacts_by_owner(
@@ -39,6 +42,7 @@ async def get_platform_contacts_by_owner(
     rows = await conn.fetch(
         """
         SELECT
+            platform.id
             card.id AS contact_card_id,
             platform.platform,
             platform.platform_user_id
@@ -50,43 +54,77 @@ async def get_platform_contacts_by_owner(
         """,
         owner_matrix_id,
     )
-    return [PlatformContact(**dict(row)) for row in rows]
+    return [PlatformContact(**row) for row in rows]
+
+
+async def get_platform_contacts_by_contact_card_id(
+    conn: asyncpg.Connection, contact_card_id: UUID
+) -> list[PlatformContact]:
+    rows = await conn.fetch(
+        """
+        SELECT
+            id,
+            contact_card_id,
+            platform,
+            platform_user_id
+        FROM
+            platform_contacts
+        WHERE
+            contact_card_id = $1;
+        """,
+        contact_card_id,
+    )
+    return [PlatformContact(**row) for row in rows]
+
+
+async def get_platform_contacts_by_contact_card_id_and_platform(
+    conn: asyncpg.Connection, platform_card_id: UUID
+) -> PlatformContact:
+    row = await conn.fetchrow(
+        """
+        SELECT
+            id,
+            contact_card_id,
+            platform,
+            platform_user_id
+        FROM
+            platform_contacts
+        WHERE
+            id = $1
+        """,
+        platform_card_id,
+    )
+    return PlatformContact(**row) if row else None
 
 
 async def update_platform_contact_user_id(
     conn: asyncpg.Connection,
-    owner_matrix_id: str,
-    platform: str,
+    platform_card_id: UUID,
     platform_user_id: str,
 ):
-    await conn.execute(
+    row = await conn.fetchrow(
         """
         UPDATE platform_contacts
         SET
             platform_user_id = $1,
             updated_at = CURRENT_TIMESTAMP
         WHERE
-            contact_card_id = (
-                SELECT id FROM contact_cards WHERE owner_matrix_id = $2
-            )
-            AND platform = $3;
+            id = $2
+        RETURNING id, contact_card_id, platform, platform_user_id;
         """,
         platform_user_id,
-        owner_matrix_id,
-        platform,
+        platform_card_id,
     )
+    return PlatformContact(**row) if row else None
 
 
-async def delete_platform_contact(
-    conn: asyncpg.Connection, contact_card_id: int, platform: str
-):
+async def delete_platform_contact(conn: asyncpg.Connection, platform_card_id: UUID):
     await conn.execute(
         """
-        DELETE FROM platform_contacts
-        WHERE
-            contact_card_id = $1
-            AND platform = $2;
+        DELETE 
+        -- SELECT *
+        FROM platform_contacts WHERE
+            id = $1
         """,
-        contact_card_id,
-        platform,
+        platform_card_id,
     )

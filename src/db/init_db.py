@@ -20,13 +20,13 @@ async def create_contact_cards_table(conn: asyncpg.Connection):
 async def create_platform_contacts_table(conn: asyncpg.Connection):
     await conn.execute("""
         CREATE TABLE IF NOT EXISTS platform_contacts (
-            id SERIAL PRIMARY KEY,
+            id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
             contact_card_id UUID NOT NULL REFERENCES contact_cards (id) ON DELETE CASCADE,
             platform VARCHAR NOT NULL,
             platform_user_id VARCHAR NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-            UNIQUE (contact_card_id, platform)
+            UNIQUE (contact_card_id, platform, platform_user_id)
         );
         CREATE INDEX IF NOT EXISTS idx_platform_user_id ON platform_contacts(platform_user_id);
     """)
@@ -34,6 +34,5 @@ async def create_platform_contacts_table(conn: asyncpg.Connection):
 
 
 async def create_all_tables(conn: asyncpg.Connection):
-    async with conn.transaction():
-        await create_contact_cards_table(conn)
-        await create_platform_contacts_table(conn)
+    await create_contact_cards_table(conn)
+    await create_platform_contacts_table(conn)
