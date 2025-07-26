@@ -1,7 +1,13 @@
-from pydantic_settings import BaseSettings
+from pydantic_settings import BaseSettings, SettingsConfigDict
+from pathlib import Path
 
 
 class Settings(BaseSettings):
+    model_config = SettingsConfigDict(
+        env_file=Path(__file__).parent.parent.parent / ".env",
+        env_file_encoding="utf-8"
+    )
+    
     POSTGRES_SERVER: str
     POSTGRES_PORT: int
     POSTGRES_USERNAME: str
@@ -9,6 +15,8 @@ class Settings(BaseSettings):
     POSTGRES_DB: str
     MATRIX_SERVER: str
     APP_MODE: str
+    BRIDGE_TELEGRAM_URL: str
+    BRIDGE_TELEGRAM_SHARED_SECRET: str
 
     @property
     def database_url(self):
