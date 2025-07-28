@@ -2,10 +2,10 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Dict, Any
 from services.bridge_telegram_service import bridge_telegram_service
-from schemas.bridge import{
+from schemas.bridge import (
     CodeRequest,
     LoginRequest
-}
+)
 
 router = APIRouter(tags=["Mautrix Telegram"])
 
