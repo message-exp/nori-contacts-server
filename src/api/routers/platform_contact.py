@@ -4,7 +4,6 @@ from schemas.platform_contact import (
     PlatformContactCreate,
     PlatformContactResponse,
     PlatformContactUpdate,
-    PlatformEnum,
 )
 from db.session import get_db
 from api.dependencies import get_user_id_from_header

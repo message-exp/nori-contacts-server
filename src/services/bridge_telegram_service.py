@@ -1,6 +1,5 @@
 import aiohttp
-import logging
-from typing import Optional, Dict, Any
+from typing import Any
 from core.config import settings
 
 class BridgeTelegramService:
@@ -15,10 +14,10 @@ class BridgeTelegramService:
     
     async def _make_request(
         self, 
-        method: str, 
-        endpoint: str, 
-        data: Optional[Dict[str, Any]] = None
-    ) -> tuple[Dict[str, Any], int]:
+        method: str | None = None, 
+        endpoint: str | None = None, 
+        data: dict[str, Any]  | None = None
+    ) -> tuple[dict[str, Any], int]:
         url = f"{self.base_url}/_matrix/provision/v1{endpoint}"
         print(f"Making {method} request to: {url}")
         
@@ -38,19 +37,19 @@ class BridgeTelegramService:
                     return response_data, response.status
         except Exception as e:
             return {"error": f"Request failed: {str(e)}"}, 500
-    
-    async def get_user_info(self, user_id: str) -> tuple[Dict[str, Any], int]:
+
+    async def get_user_info(self, user_id: str | None = None) -> tuple[dict[str, Any], int]:
         return await self._make_request("GET", f"/user/{user_id}")
-    
-    async def login_request_code(self, user_id: str, phone_number: str) -> tuple[Dict[str, Any], int]:
+
+    async def login_request_code(self, user_id: str | None = None, phone_number: str | None = None) -> tuple[dict[str, Any], int]:
         data = {"phone": phone_number}
         return await self._make_request("POST", f"/user/{user_id}/login/request_code", data)
-    
-    async def login_send_code(self, user_id: str, code: str) -> tuple[Dict[str, Any], int]:
+
+    async def login_send_code(self, user_id: str | None = None, code: str | None = None) -> tuple[dict[str, Any], int]:
         data = {"code": code}
         return await self._make_request("POST", f"/user/{user_id}/login/send_code", data)
-    
-    async def logout_user(self, user_id: str) -> tuple[Dict[str, Any], int]:
+
+    async def logout_user(self, user_id: str | None = None) -> tuple[dict[str, Any], int]:
         return await self._make_request("POST", f"/user/{user_id}/logout")
 
 bridge_telegram_service = BridgeTelegramService()
