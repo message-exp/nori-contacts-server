@@ -2,13 +2,12 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Dict, Any
 from services.bridge_telegram_service import bridge_telegram_service
+from schemas.bridge import{
+    CodeRequest,
+    LoginRequest
+}
 
 router = APIRouter(tags=["Mautrix Telegram"])
-
-class CodeRequest(BaseModel):
-    code: str
-class LoginRequest(BaseModel):
-    phone: str
 
 @router.get("/users/{user_id}/info")
 async def get_user_info(user_id: str):
