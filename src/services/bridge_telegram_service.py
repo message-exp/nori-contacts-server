@@ -22,9 +22,7 @@ class BridgeTelegramService:
             return {"error": "BRIDGE_TELEGRAM_URL is not in white list."}, 500
         url = f"{self.base_url}/_matrix/provision/v1{endpoint}"
         print(f"Making {method} request to: {url}")
-
-        if method is None:
-            raise ValueError("HTTP method must be specified")                                   
+                             
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.request(
