@@ -5,22 +5,26 @@ from core.config import settings
 class BridgeTelegramService:
     
     def __init__(self):
-        self.base_url = settings.BRIDGE_TELEGRAM_URL
+        self.base_url = settings.BRIDGE_URL
         self.shared_secret = settings.BRIDGE_TELEGRAM_SHARED_SECRET
+        self.white_listed_url = settings.BRIDGE_WHITE_LISTED_URL
         self.headers = {
             "Authorization": f"Bearer {self.shared_secret}",
             "Content-Type": "application/json"
         }
-    
     async def _make_request(
         self, 
         method: str | None = None, 
         endpoint: str | None = None, 
         data: dict[str, Any]  | None = None
     ) -> tuple[dict[str, Any], int]:
+        if self.base_url != self.white_listed_url:
+            return {"error": "BRIDGE_TELEGRAM_URL is not in white list."}, 500
         url = f"{self.base_url}/_matrix/provision/v1{endpoint}"
         print(f"Making {method} request to: {url}")
-        
+
+        if method is None:
+            raise ValueError("HTTP method must be specified")                                   
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.request(
