@@ -1,7 +1,8 @@
 from fastapi import APIRouter, HTTPException , Depends
 from services.bridge_telegram_service import bridge_telegram_service
 from schemas.bridge import (
-    LoginRequest
+    LoginRequest,
+    CodeRequest
 )
 from api.dependencies import get_user_id_from_header
 
@@ -28,10 +29,10 @@ async def login_user(login_request: LoginRequest , user_id: str = Depends(get_us
 
 
 @router.post("/users/login_send_code")
-async def send_verification_code(login_request: LoginRequest, user_id: str = Depends(get_user_id_from_header)):
+async def send_verification_code(code_request: CodeRequest, user_id: str = Depends(get_user_id_from_header)):
     data, status = await bridge_telegram_service.login_send_code(
         user_id, 
-        login_request.code
+        code_request.code
     )
     if status != 200:
         raise HTTPException(status_code=status, detail=data)

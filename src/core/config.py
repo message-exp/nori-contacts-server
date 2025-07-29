@@ -11,7 +11,7 @@ class Settings(BaseSettings):
     POSTGRES_DB: str
     MATRIX_SERVER: str
     APP_MODE: str
-    BRIDGE_URL: str
+    BRIDGE_TELEGRAM_URL: str
     BRIDGE_TELEGRAM_SHARED_SECRET: str
     BRIDGE_WHITE_LISTED_URL: str
 

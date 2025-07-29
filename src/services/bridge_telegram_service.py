@@ -5,7 +5,7 @@ from core.config import settings
 class BridgeTelegramService:
     
     def __init__(self):
-        self.base_url = settings.BRIDGE_URL
+        self.base_url = settings.BRIDGE_TELEGRAM_URL
         self.shared_secret = settings.BRIDGE_TELEGRAM_SHARED_SECRET
         self.white_listed_url = settings.BRIDGE_WHITE_LISTED_URL
         self.headers = {
