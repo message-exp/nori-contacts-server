@@ -16,7 +16,7 @@ A server to store the user contacts information of nori.
         ```
     - for windows(PowerShell)
         ```ps
-        . .\.venv\Scripts\Activate.ps1
+        .\.venv\Scripts\Activate.ps1
         ```
 5. Copy .env.sample to .env and fill in the required values.
 6. Run the app in dev mode.
