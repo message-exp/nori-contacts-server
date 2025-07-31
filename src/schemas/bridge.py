@@ -18,9 +18,9 @@ class LoginRequest(BaseModel):
 
 class TelegramInfo(BaseModel):
     id: int
-    username: str | None = None # 對應 "username": null
+    username: str | None = None
     first_name: str | None = None
-    last_name: str | None = None # 對應 "last_name": "BoLin" 或 null
+    last_name: str | None = None
     phone: str
     is_bot: bool
 
