@@ -9,6 +9,7 @@ async def insert_platform_contact(
     contact_card_id: UUID,
     platform: str,
     platform_user_id: str,
+    dm_room_id: str,
 ):
     row = await conn.fetchrow(
         """
@@ -16,6 +17,7 @@ async def insert_platform_contact(
             contact_card_id,
             platform,
             platform_user_id,
+            dm_room_id,
             created_at,
             updated_at
         )
@@ -23,15 +25,17 @@ async def insert_platform_contact(
             $1,
             $2,
             $3,
+            $4,
             DEFAULT,
             DEFAULT
         )
         ON CONFLICT (contact_card_id, platform, platform_user_id) DO NOTHING
-        RETURNING id, contact_card_id, platform, platform_user_id;
+        RETURNING id, contact_card_id, platform, platform_user_id, dm_room_id;
         """,
         contact_card_id,
         platform,
         platform_user_id,
+        dm_room_id,
     )
     return PlatformContact(**row) if row else None
 
@@ -45,7 +49,8 @@ async def get_platform_contacts_by_owner(
             platform.id
             card.id AS contact_card_id,
             platform.platform,
-            platform.platform_user_id
+            platform.platform_user_id,
+            platform.dm_room_id
         FROM
             contact_cards AS card
             INNER JOIN platform_contacts AS platform ON card.id = platform.contact_card_id
@@ -66,7 +71,8 @@ async def get_platform_contacts_by_contact_card_id(
             id,
             contact_card_id,
             platform,
-            platform_user_id
+            platform_user_id,
+            dm_room_id
         FROM
             platform_contacts
         WHERE
@@ -77,7 +83,7 @@ async def get_platform_contacts_by_contact_card_id(
     return [PlatformContact(**row) for row in rows]
 
 
-async def get_platform_contacts_by_contact_card_id_and_platform(
+async def get_platform_contacts_by_platform_card_id(
     conn: asyncpg.Connection, platform_card_id: UUID
 ) -> PlatformContact:
     row = await conn.fetchrow(
@@ -86,7 +92,8 @@ async def get_platform_contacts_by_contact_card_id_and_platform(
             id,
             contact_card_id,
             platform,
-            platform_user_id
+            platform_user_id,
+            dm_room_id
         FROM
             platform_contacts
         WHERE
@@ -101,19 +108,22 @@ async def update_platform_contact_user_id(
     conn: asyncpg.Connection,
     platform_card_id: UUID,
     platform_user_id: str,
+    dm_room_id: str,
 ):
     row = await conn.fetchrow(
         """
         UPDATE platform_contacts
         SET
             platform_user_id = $1,
+            dm_room_id = $3,
             updated_at = CURRENT_TIMESTAMP
         WHERE
             id = $2
-        RETURNING id, contact_card_id, platform, platform_user_id;
+        RETURNING id, contact_card_id, platform, platform_user_id, dm_room_id;
         """,
         platform_user_id,
         platform_card_id,
+        dm_room_id,
     )
     return PlatformContact(**row) if row else None
 

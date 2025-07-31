@@ -20,3 +20,4 @@ class PlatformContact(BaseModel):
     contact_card_id: UUID
     platform: PlatformEnum
     platform_user_id: str
+    dm_room_id: str
