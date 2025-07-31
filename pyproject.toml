@@ -8,6 +8,7 @@ dependencies = [
     "aiohttp>=3.12.13",
     "asyncpg>=0.30.0",
     "fastapi[standard]>=0.115.14",
+    "pydantic-extra-types[phonenumbers]>=2.10.5",
     "pydantic-settings>=2.10.1",
     "ruff>=0.12.1",
 ]
