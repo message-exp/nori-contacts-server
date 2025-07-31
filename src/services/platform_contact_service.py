@@ -14,7 +14,7 @@ from db.repositories.platform_contact_repository import (
     insert_platform_contact,
     update_platform_contact_user_id,
     delete_platform_contact,
-    get_platform_contacts_by_contact_card_id_and_platform,
+    get_platform_contacts_by_platform_card_id,
 )
 
 
@@ -49,6 +49,7 @@ class PlatformContactServicer:
             platform_contact.contact_card_id,
             platform_contact.platform,
             platform_contact.platform_user_id,
+            platform_contact.dm_room_id,
         )
         if not new_platform_contact:
             raise HTTPException(
@@ -62,10 +63,8 @@ class PlatformContactServicer:
         platform_card_id: UUID,
         platform_contact: PlatformContactUpdate,
     ):
-        old_platform_contact = (
-            await get_platform_contacts_by_contact_card_id_and_platform(
-                db, platform_card_id
-            )
+        old_platform_contact = await get_platform_contacts_by_platform_card_id(
+            db, platform_card_id
         )
         if old_platform_contact is None:
             raise HTTPException(
@@ -73,7 +72,10 @@ class PlatformContactServicer:
                 detail="Platform contact not found.",
             )
         updated_platform_contact = await update_platform_contact_user_id(
-            db, platform_card_id, platform_contact.platform_user_id
+            db,
+            platform_card_id,
+            platform_contact.platform_user_id,
+            platform_contact.dm_room_id,
         )
         if updated_platform_contact is None:
             raise HTTPException(
@@ -87,10 +89,8 @@ class PlatformContactServicer:
         db: asyncpg.Connection,
         platform_card_id: UUID,
     ):
-        old_platform_contact = (
-            await get_platform_contacts_by_contact_card_id_and_platform(
-                db, platform_card_id
-            )
+        old_platform_contact = await get_platform_contacts_by_platform_card_id(
+            db, platform_card_id
         )
         if old_platform_contact is None:
             raise HTTPException(
