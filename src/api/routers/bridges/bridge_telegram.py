@@ -2,13 +2,16 @@ from fastapi import APIRouter, HTTPException , Depends
 from services.bridge_telegram_service import bridge_telegram_service
 from schemas.bridge import (
     LoginRequest,
-    CodeRequest
+    CodeRequest,
+    UserInfoResponse,
+    MessageResponse,
+    SendVerifyCodeResponse
 )
 from api.dependencies import get_user_id_from_header
 
 router = APIRouter(tags=["Mautrix Telegram"])
 
-@router.get("/users/info")
+@router.get("/users/info" , response_model=UserInfoResponse)
 async def get_user_info(user_id: str = Depends(get_user_id_from_header)):
     data, status = await bridge_telegram_service.get_user_info(user_id)
     
@@ -17,8 +20,8 @@ async def get_user_info(user_id: str = Depends(get_user_id_from_header)):
     
     return data
 
-@router.post("/users/login/code")
-async def login_user(login_request: LoginRequest , user_id: str = Depends(get_user_id_from_header)):
+@router.post("/users/login/code" , response_model=MessageResponse)
+async def login_user(login_request: LoginRequest , user_id: str = Depends(get_user_id_from_header) ):
     """
     Request Telegram verification code to start login process
     
@@ -45,7 +48,7 @@ async def login_user(login_request: LoginRequest , user_id: str = Depends(get_us
     return data
 
 
-@router.post("/users/login/code/verify")
+@router.post("/users/login/code/verify" , response_model=SendVerifyCodeResponse)
 async def send_verification_code(code_request: CodeRequest, user_id: str = Depends(get_user_id_from_header)):
     """
     Submit Telegram verification code to complete login
@@ -68,7 +71,7 @@ async def send_verification_code(code_request: CodeRequest, user_id: str = Depen
     return data
 
 
-@router.post("/users/logout")
+@router.post("/users/{user_id}/logout")
 async def logout_user(user_id: str = Depends(get_user_id_from_header)):
     data, status = await bridge_telegram_service.logout_user(user_id)
     if status != 200:

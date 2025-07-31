@@ -14,3 +14,25 @@ class CodeRequest(BaseModel):
     code: str
 class LoginRequest(BaseModel):
     phone: ValidatedPhone
+
+
+class TelegramInfo(BaseModel):
+    id: int
+    username: str | None = None # 對應 "username": null
+    first_name: str | None = None
+    last_name: str | None = None # 對應 "last_name": "BoLin" 或 null
+    phone: str
+    is_bot: bool
+
+class UserInfoResponse(BaseModel):
+    telegram: TelegramInfo | None = None
+    mxid: str
+    permissions: str
+
+class MessageResponse(BaseModel):
+    message: str
+
+class SendVerifyCodeResponse(BaseModel):
+    state: str
+    username: str | None = None
+    phone: str
