@@ -71,7 +71,7 @@ async def send_verification_code(code_request: CodeRequest, user_id: str = Depen
     return data
 
 
-@router.post("/users/{user_id}/logout")
+@router.post("/users/logout")
 async def logout_user(user_id: str = Depends(get_user_id_from_header)):
     data, status = await bridge_telegram_service.logout_user(user_id)
     if status != 200:
