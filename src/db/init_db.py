@@ -24,6 +24,7 @@ async def create_platform_contacts_table(conn: asyncpg.Connection):
             contact_card_id UUID NOT NULL REFERENCES contact_cards (id) ON DELETE CASCADE,
             platform VARCHAR NOT NULL,
             platform_user_id VARCHAR NOT NULL,
+            dm_room_id VARCHAR NOT NULL,
             created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             UNIQUE (contact_card_id, platform, platform_user_id)

@@ -6,6 +6,7 @@ from pydantic import BaseModel
 class PlatformEnum(str, Enum):
     TELEGRAM = "Telegram"
     DISCORD = "Discord"
+    MATRIX = "Matrix"
 
 
 class ContactCard(BaseModel):
@@ -20,3 +21,4 @@ class PlatformContact(BaseModel):
     contact_card_id: UUID
     platform: PlatformEnum
     platform_user_id: str
+    dm_room_id: str
