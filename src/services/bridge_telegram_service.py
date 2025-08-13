@@ -18,8 +18,6 @@ class BridgeTelegramService:
         data: dict[str, Any]  | None = None
     ) -> tuple[dict[str, Any], int]:
         url = f"{self.base_url}/_matrix/provision/v1{endpoint}"
-        print(f"Making {method} request to: {url}")
-                             
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.request(

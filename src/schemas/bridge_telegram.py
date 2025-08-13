@@ -36,3 +36,4 @@ class SendVerifyCodeResponse(BaseModel):
     state: str
     username: str | None = None
     phone: str
+    

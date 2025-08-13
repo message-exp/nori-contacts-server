@@ -12,6 +12,8 @@ class Settings(BaseSettings):
     APP_MODE: str
     BRIDGE_TELEGRAM_URL: str
     BRIDGE_TELEGRAM_SHARED_SECRET: str
+    BRIDGE_DISCORD_URL: str
+    BRIDGE_DISCORD_SHARED_SECRET: str
 
     @property
     def database_url(self):
