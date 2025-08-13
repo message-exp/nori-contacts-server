@@ -37,7 +37,8 @@ class BridgeDiscordService:
             return {"error": f"Request failed: {str(e)}"}, 500
 
 
-    async def login(self , user_id : str | None = None):
+    async def login_with_qr(self , user_id : str | None = None):
+        #http or https
         websocket_url = f"{self.base_url.replace("http", "ws")}/_matrix/provision/v1/login/qr?user_id={user_id}"
         # print(f"WebSocket URL: {websocket_url}")
         # websocket_url = f"{websocket_url}?user_id={user_id}"
@@ -57,14 +58,12 @@ class BridgeDiscordService:
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"internal server error: {e}")
     async def logout(self, user_id: str | None = None) -> dict[str, Any]:
-        data, status = await self._make_request('POST', f"/logout?user_id={user_id}")
-        if status != 200:
-            raise HTTPException(status_code=status, detail=data)
-        return data
+        return await self._make_request('POST', f"/logout?user_id={user_id}")
     async def ping(self):
-        data , status = await self._make_request('GET' , "/ping")
-        if status != 200:
-            raise HTTPException(status_code=status, detail=data)
-        return data
+        return await self._make_request('GET' , "/ping")
+    async def login_with_token(token : str | None = None , user_id : str | None = None):
+        data = {"token": token}
+        return await self._make_request('POST' , "/login/token" , data)
+        
 
 bridge_discord_service = BridgeDiscordService()

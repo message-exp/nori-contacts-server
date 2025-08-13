@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException , Depends
 from services.bridge_telegram_service import bridge_telegram_service
-from schemas.bridge import (
+from schemas.bridge_telegram import (
     LoginRequest,
     CodeRequest,
     UserInfoResponse,
