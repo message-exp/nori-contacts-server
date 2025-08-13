@@ -40,20 +40,11 @@ class BridgeDiscordService:
     async def login_with_qr(self , user_id : str | None = None) -> tuple[dict[str, Any], int]:
         #http or https
         websocket_url = f"{self.base_url.replace("http", "ws")}/_matrix/provision/v1/login/qr?user_id={user_id}"
-        # print(f"WebSocket URL: {websocket_url}")
-        # websocket_url = f"{websocket_url}?user_id={user_id}"
-        # print(f"full websocket URL: {websocket_url}")
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.ws_connect(websocket_url, headers=self.headers) as ws:
                     message = await ws.receive()
-                    message_str = message.data
-                    # if message_str[success]
-                    message_data = json.loads(message_str)
-                    # print(f"message_data :{message_data.get("success")}")
-                    # return message_data
-                    # if message_data.get("success") is False:
-                    #     return message_data
+                    message_data = json.loads(message.data)
                     return message_data
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"internal server error: {e}")

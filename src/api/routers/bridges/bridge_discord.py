@@ -8,7 +8,7 @@ from services.bridge_discord_service import bridge_discord_service
 router = APIRouter(tags = ["Mautrix Discord"])
 
 @router.get("/login/qrcode" , response_model = LoginWithQrcodeResponse)
-async def login_with_qr(user_id: str = Depends(get_user_id_from_header)):
+async def login_with_qr(user_id: str = "@barney:tomorin.com"):
     data = await bridge_discord_service.login_with_qr(user_id)
     return data
 @router.post("/logout", response_model = LogoutResponse)
