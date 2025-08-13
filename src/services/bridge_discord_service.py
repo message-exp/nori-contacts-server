@@ -39,7 +39,7 @@ class BridgeDiscordService:
 
     async def login_with_qr(self , user_id : str | None = None) -> tuple[dict[str, Any], int]:
         #http or https
-        websocket_url = f"{self.base_url.replace("http", "ws")}/_matrix/provision/v1/login/qr?user_id={user_id}"
+        websocket_url = f"{self.base_url.replace("https", "ws")}/_matrix/provision/v1/login/qr?user_id={user_id}"
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.ws_connect(websocket_url, headers=self.headers) as ws:
@@ -64,5 +64,4 @@ class BridgeDiscordService:
                 data = {"token": f"{token}"}
         return await self._make_request('POST' , f"/login/token?user_id={user_id}" , data)
         
-
 bridge_discord_service = BridgeDiscordService()
