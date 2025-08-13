@@ -61,5 +61,10 @@ class BridgeDiscordService:
         if status != 200:
             raise HTTPException(status_code=status, detail=data)
         return data
+    async def ping(self):
+        data , status = await self._make_request('GET' , "/ping")
+        if status != 200:
+            raise HTTPException(status_code=status, detail=data)
+        return data
 
 bridge_discord_service = BridgeDiscordService()

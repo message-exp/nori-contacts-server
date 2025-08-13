@@ -18,3 +18,6 @@ async def login(user_id: str = "@barney:tomorin.com"):
 @router.post("/logout")
 async def logout(user_id: str = "@barney:tomorin.com"):
     return await bridge_discord_service.logout(user_id)
+@router.get("/ping")
+async def ping():
+    return await bridge_discord_service.ping()
