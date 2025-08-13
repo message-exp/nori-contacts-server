@@ -18,7 +18,6 @@ class BridgeDiscordService:
         data: dict[str, Any]  | None = None
     ) -> tuple[dict[str, Any], int]:
         url = f"{self.base_url}/_matrix/provision/v1{endpoint}"
-        print(f"Making {method} request to: {url}")
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.request(
@@ -29,7 +28,7 @@ class BridgeDiscordService:
                 ) as response:
                     try:
                         response_data = await response.json()
-                    except:
+                    except(json.JSONDecodeError, aiohttp.ContentTypeError):
                         response_text = await response.text()
                         response_data = {"message": response_text}
                     return response_data, response.status
@@ -39,13 +38,13 @@ class BridgeDiscordService:
 
     async def login_with_qr(self , user_id : str | None = None) -> tuple[dict[str, Any], int]:
         #http or https
-        websocket_url = f"{self.base_url.replace("https", "ws")}/_matrix/provision/v1/login/qr?user_id={user_id}"
+        websocket_url = f"{self.base_url.replace('https://', 'wss://').replace('http://', 'ws://')}/_matrix/provision/v1/login/qr?user_id={user_id}"
         try:
             async with aiohttp.ClientSession() as session:
                 async with session.ws_connect(websocket_url, headers=self.headers) as ws:
                     message = await ws.receive()
                     message_data = json.loads(message.data)
-                    return message_data
+                    return message_data , 200
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"internal server error: {e}")
     async def logout(self, user_id: str | None = None) -> tuple[dict[str, Any], int]:
