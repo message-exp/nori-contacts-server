@@ -11,6 +11,9 @@ class LoginWithTokenResponse(BaseModel):
     error : str | None = None
     errcode : str | None = None
 class LoginWithQrcodeResponse(BaseModel):
+    success : bool
+    error : str | None = None
+    errcode : str | None = None
     code : str | None = None
     timeout : int | None = None
 class LogoutResponse(BaseModel):
