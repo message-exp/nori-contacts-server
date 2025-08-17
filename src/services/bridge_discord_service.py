@@ -1,6 +1,6 @@
 import aiohttp
 import json
-from typing import Any, AsyncGenerator
+from typing import Any
 from core.config import settings
 from fastapi import HTTPException
 class BridgeDiscordService:
