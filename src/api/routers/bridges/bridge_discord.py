@@ -25,7 +25,7 @@ async def ping(user_id : str = Depends(get_user_id_from_header)):
     return data
 @router.post("/login/token" , response_model = LoginWithTokenResponse)
 async def login_with_token(loginWithTokenRequest : LoginWithTokenRequest , user_id: str = Depends(get_user_id_from_header)):
-    data , status = await bridge_discord_service.login_with_token(loginWithTokenRequest.token , user_id , loginWithTokenRequest.token_type)
+    data , status = await bridge_discord_service.login_with_token(loginWithTokenRequest.token , user_id , loginWithTokenRequest.token_type.lower())
     if status != 200:
         raise HTTPException(status_code=status, detail=data)
     return data

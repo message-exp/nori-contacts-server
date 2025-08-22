@@ -3,6 +3,13 @@ import json
 from typing import Any
 from core.config import settings
 from fastapi import HTTPException
+from enum import StrEnum
+
+class TokenType(StrEnum):
+    BOT = "bot"
+    OAUTH = "oauth"
+    USER = "user"
+
 class BridgeDiscordService:
     def __init__(self):
         self.base_url = settings.BRIDGE_DISCORD_URL
@@ -52,15 +59,15 @@ class BridgeDiscordService:
     async def ping(self , user_id : str) -> tuple[dict[str, Any], int]:
         return await self._make_request('GET' , f"/ping?user_id={user_id}")
     async def login_with_token(self , token : str, user_id : str, token_type : str) -> tuple[dict[str, Any], int]:
-        if token_type not in ["Bot" , "oauth" , "User"]:
-            return {"error": "Invalid token type"}, 400
         match token_type:
-            case "Bot":
+            case TokenType.BOT:
                 data = {"token": f"Bot {token}"}
-            case "oauth":
+            case TokenType.OAUTH:
                 data = {"token": f"Bearer {token}"}
-            case "User":
+            case TokenType.USER:
                 data = {"token": f"{token}"}
+            case _:
+                return {"error": "Invalid token type"}, 400
         return await self._make_request('POST' , f"/login/token?user_id={user_id}" , data)
         
 bridge_discord_service = BridgeDiscordService()
