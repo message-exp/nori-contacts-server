@@ -35,7 +35,7 @@ class BridgeDiscordService:
                 ) as response:
                     try:
                         response_data = await response.json()
-                    except(json.JSONDecodeError, aiohttp.ContentTypeError):
+                    except Exception as e:
                         response_text = await response.text()
                         response_data = {"message": response_text}
                     return response_data, response.status

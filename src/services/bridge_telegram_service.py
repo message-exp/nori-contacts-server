@@ -28,25 +28,25 @@ class BridgeTelegramService:
                 ) as response:
                     try:
                         response_data = await response.json()
-                    except Exception:
+                    except Exception as e:
                         response_text = await response.text()
                         response_data = {"message": response_text}
                     return response_data, response.status
         except Exception as e:
             return {"error": f"Request failed: {str(e)}"}, 500
 
-    async def get_user_info(self, user_id: str | None = None) -> tuple[dict[str, Any], int]:
+    async def get_user_info(self, user_id: str) -> tuple[dict[str, Any], int]:
         return await self._make_request("GET", f"/user/{user_id}")
 
-    async def login_request_code(self, user_id: str | None = None, phone_number: str | None = None) -> tuple[dict[str, Any], int]:
+    async def login_request_code(self, user_id: str, phone_number: str) -> tuple[dict[str, Any], int]:
         data = {"phone": phone_number}
         return await self._make_request("POST", f"/user/{user_id}/login/request_code", data)
 
-    async def login_send_code(self, user_id: str | None = None, code: str | None = None) -> tuple[dict[str, Any], int]:
+    async def login_send_code(self, user_id: str, code: str) -> tuple[dict[str, Any], int]:
         data = {"code": code}
         return await self._make_request("POST", f"/user/{user_id}/login/send_code", data)
 
-    async def logout_user(self, user_id: str | None = None) -> tuple[dict[str, Any], int]:
+    async def logout_user(self, user_id: str) -> tuple[dict[str, Any], int]:
         return await self._make_request("POST", f"/user/{user_id}/logout")
 
 bridge_telegram_service = BridgeTelegramService()
