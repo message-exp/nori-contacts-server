@@ -36,7 +36,7 @@ class BridgeDiscordService:
             return {"error": f"Request failed: {str(e)}"}, 500
 
 
-    async def login_with_qr(self , user_id : str | None = None) -> tuple[dict[str, Any], int]:
+    async def login_with_qr(self , user_id : str) -> tuple[dict[str, Any], int]:
         #http or https
         websocket_url = f"{self.base_url.replace('https://', 'wss://').replace('http://', 'ws://')}/_matrix/provision/v1/login/qr?user_id={user_id}"
         try:
@@ -47,11 +47,11 @@ class BridgeDiscordService:
                     return message_data , 200
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"internal server error: {e}")
-    async def logout(self, user_id: str | None = None) -> tuple[dict[str, Any], int]:
+    async def logout(self, user_id: str) -> tuple[dict[str, Any], int]:
         return await self._make_request('POST', f"/logout?user_id={user_id}")
-    async def ping(self , user_id : str | None = None) -> tuple[dict[str, Any], int]:
+    async def ping(self , user_id : str) -> tuple[dict[str, Any], int]:
         return await self._make_request('GET' , f"/ping?user_id={user_id}")
-    async def login_with_token(self , token : str | None = None , user_id : str | None = None , token_type : str | None = None) -> tuple[dict[str, Any], int]:
+    async def login_with_token(self , token : str, user_id : str, token_type : str) -> tuple[dict[str, Any], int]:
         if token_type not in ["Bot" , "oauth" , "User"]:
             return {"error": "Invalid token type"}, 400
         match token_type:
