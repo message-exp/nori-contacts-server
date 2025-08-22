@@ -28,7 +28,7 @@ class BridgeTelegramService:
                 ) as response:
                     try:
                         response_data = await response.json()
-                    except:
+                    except Exception:
                         response_text = await response.text()
                         response_data = {"message": response_text}
                     return response_data, response.status
